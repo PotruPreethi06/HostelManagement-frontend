@@ -1,3 +1,5 @@
+import API_URL from "./api";
+
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -68,7 +70,7 @@ function Students() {
         try {
 
             const response = await fetch(
-                "http://localhost:8080/students",
+                `${API_URL}/students`,
                 {
                     method: "GET",
                     headers: getHeaders()
@@ -149,8 +151,8 @@ function Students() {
         try {
 
             const url = editingId
-                ? `http://localhost:8080/students/${editingId}`
-                : "http://localhost:8080/students";
+                ? `${API_URL}/students/${editingId}`
+                : `${API_URL}/students`;
 
             const method = editingId
                 ? "PUT"
@@ -286,7 +288,7 @@ function Students() {
         try {
 
             const response = await fetch(
-                `http://localhost:8080/students/${id}`,
+                `${API_URL}/students/${id}`,
                 {
                     method: "DELETE",
                     headers: getHeaders()
@@ -352,7 +354,7 @@ function Students() {
         try {
 
             const response = await fetch(
-                `http://localhost:8080/students/${searchId}`,
+                `${API_URL}/students/${searchId}`,
                 {
                     method: "GET",
                     headers: getHeaders()

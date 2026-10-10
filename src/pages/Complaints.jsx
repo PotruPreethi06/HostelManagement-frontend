@@ -1,3 +1,4 @@
+import API_URL from "./api";    
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -40,7 +41,7 @@ function Complaints() {
             setLoading(true);
 
             const response = await fetch(
-                "http://localhost:8080/complaints",
+                `${API_URL}/complaints`,
                 {
                     method: "GET",
                     headers: {
@@ -80,7 +81,7 @@ function Complaints() {
         try {
 
             const response = await fetch(
-                "http://localhost:8080/students",
+                `${API_URL}/students`,
                 {
                     method: "GET",
                     headers: {
@@ -159,7 +160,7 @@ function Complaints() {
             if (editingId) {
 
                 url =
-                    `http://localhost:8080/complaints/${editingId}`;
+                    `${API_URL}/complaints/${editingId}`;
 
                 method = "PUT";
 
@@ -169,7 +170,7 @@ function Complaints() {
             else {
 
                 url =
-                    `http://localhost:8080/complaints?studentId=${formData.studentId}`;
+                    `${API_URL}/complaints?studentId=${formData.studentId}`;
 
                 method = "POST";
 
@@ -293,7 +294,7 @@ function Complaints() {
         try {
 
             const response = await fetch(
-                `http://localhost:8080/complaints/${id}`,
+                `${API_URL}/complaints/${id}`,
                 {
                     method: "DELETE",
 

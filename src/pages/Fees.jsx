@@ -1,3 +1,4 @@
+import API_URL from "./api";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -49,7 +50,7 @@ function Fees() {
             console.log("Fee Token:", token);
 
             const response = await fetch(
-                "http://localhost:8080/fees",
+                `${API_URL}/fees`,
                 {
                     method: "GET",
 
@@ -121,7 +122,7 @@ function Fees() {
             const token = getToken();
 
             const response = await fetch(
-                "http://localhost:8080/students",
+                `${API_URL}/students`,
                 {
                     method: "GET",
 
@@ -229,7 +230,7 @@ function Fees() {
             if (editingId) {
 
                 url =
-                    `http://localhost:8080/fees/${editingId}`;
+                    `${API_URL}/fees/${editingId}`;
 
                 method = "PUT";
 
@@ -240,7 +241,7 @@ function Fees() {
             else {
 
                 url =
-                    `http://localhost:8080/fees?studentId=${formData.studentId}`;
+                    `${API_URL}/fees?studentId=${formData.studentId}`;
 
                 method = "POST";
 
@@ -388,7 +389,7 @@ function Fees() {
 
             const response =
                 await fetch(
-                    `http://localhost:8080/fees/${id}`,
+                    `${API_URL}/fees/${id}`,
                     {
                         method: "DELETE",
 

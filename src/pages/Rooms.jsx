@@ -1,3 +1,5 @@
+import API_URL from "./api";
+
 import { useEffect, useState } from "react";
 import axios from "axios";
 
@@ -50,7 +52,7 @@ function Rooms() {
             const token = getToken();
 
             const response = await axios.get(
-                "http://localhost:8080/rooms",
+                `${API_URL}/rooms`,
                 {
                     headers: {
                         Authorization: `Bearer ${token}`
@@ -242,7 +244,7 @@ function Rooms() {
 
                 await axios.post(
 
-                    "http://localhost:8080/rooms",
+                    `${API_URL}/rooms`,
 
                     roomData,
 
@@ -275,7 +277,7 @@ function Rooms() {
 
                 await axios.put(
 
-                    `http://localhost:8080/rooms/${editingId}`,
+                    `${API_URL}/rooms/${editingId}`,
 
                     roomData,
 
@@ -358,7 +360,7 @@ function Rooms() {
 
             await axios.delete(
 
-                `http://localhost:8080/rooms/${id}`,
+                `${API_URL}/rooms/${id}`,
 
                 {
                     headers: {

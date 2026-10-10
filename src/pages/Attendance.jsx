@@ -1,3 +1,5 @@
+import API_URL from "./api";
+
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -36,7 +38,7 @@ function Attendance() {
             setLoading(true);
 
             const response = await fetch(
-                "http://localhost:8080/attendance",
+                `${API_URL}/attendance`,
                 {
                     method: "GET",
                     headers: {
@@ -76,7 +78,7 @@ function Attendance() {
         try {
 
             const response = await fetch(
-                "http://localhost:8080/students",
+                `${API_URL}/students`,
                 {
                     method: "GET",
                     headers: {
@@ -155,7 +157,7 @@ function Attendance() {
             if (editingId) {
 
                 url =
-                    `http://localhost:8080/attendance/${editingId}`;
+                    `${API_URL}/attendance/${editingId}`;
 
                 method = "PUT";
 
@@ -165,7 +167,7 @@ function Attendance() {
             else {
 
                 url =
-                    `http://localhost:8080/attendance?studentId=${formData.studentId}`;
+                    `${API_URL}/attendance?studentId=${formData.studentId}`;
 
                 method = "POST";
 
@@ -276,8 +278,7 @@ function Attendance() {
 
         try {
 
-            const response = await fetch(
-                `http://localhost:8080/attendance/${id}`,
+            const response = await fetch(`${API_URL}/attendance/${id}`,
                 {
                     method: "DELETE",
 

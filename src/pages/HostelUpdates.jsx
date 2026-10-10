@@ -1,3 +1,4 @@
+import API_URL from "./api";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -34,7 +35,7 @@ function HostelUpdates() {
             setLoading(true);
 
             const response = await axios.get(
-                "http://localhost:8080/hostel-updates",
+                `${API_URL}/hostel-updates`,
                 {
                     headers: {
                         Authorization: `Bearer ${token}`
@@ -156,7 +157,7 @@ function HostelUpdates() {
                 // =========================
 
                 await axios.post(
-                    "http://localhost:8080/hostel-updates",
+                    `${API_URL}/hostel-updates`,
                     formData,
                     {
                         headers: {
@@ -177,7 +178,7 @@ function HostelUpdates() {
                 // =========================
 
                 await axios.put(
-                    `http://localhost:8080/hostel-updates/${editingId}`,
+                    `${API_URL}/hostel-updates/${editingId}`,
                     formData,
                     {
                         headers: {
@@ -240,7 +241,7 @@ function HostelUpdates() {
         try {
 
             await axios.delete(
-                `http://localhost:8080/hostel-updates/${id}`,
+                `${API_URL}/hostel-updates/${id}`,
                 {
                     headers: {
                         Authorization: `Bearer ${token}`

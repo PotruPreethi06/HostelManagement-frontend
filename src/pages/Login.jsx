@@ -1,3 +1,4 @@
+import API_URL from "./api";
 import { useState } from "react";
 
 function Login() {
@@ -16,7 +17,7 @@ function Login() {
         try {
 
             const response = await fetch(
-                "http://localhost:8080/admins/login",
+                `${API_URL}/admins/login`,
                 {
                     method: "POST",
                     headers: {
