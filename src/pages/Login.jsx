@@ -1,8 +1,8 @@
+
 import API_URL from "../api";
 import { useState } from "react";
 
 function Login() {
-
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [message, setMessage] = useState("");
@@ -15,50 +15,110 @@ function Login() {
         setLoading(true);
 
         try {
+            // Validate API URL
+            if (!API_URL) {
+                throw new Error(
+                    "API URL is missing. Check your frontend API configuration."
+                );
+            }
 
             const response = await fetch(
-                `${API_URL}/admins/login`,
+                `${API_URL.replace(/\/+$/, "")}/admins/login`,
                 {
                     method: "POST",
                     headers: {
-                        "Content-Type": "application/json"
+                        "Content-Type": "application/json",
+                        "Accept": "application/json"
                     },
                     body: JSON.stringify({
-                        email: email,
+                        email: email.trim(),
                         password: password
                     })
                 }
             );
 
-            const data = await response.json();
+            // Read the response only once
+            const responseText = await response.text();
 
+            let data = {};
+
+            if (responseText.trim()) {
+                try {
+                    data = JSON.parse(responseText);
+                } catch {
+                    data = {
+                        message: responseText
+                    };
+                }
+            }
+
+            // Handle HTTP errors
             if (!response.ok) {
+                if (response.status === 401) {
+                    throw new Error(
+                        data.message || "Invalid email or password."
+                    );
+                }
+
+                if (response.status === 403) {
+                    throw new Error(
+                        data.message ||
+                        "Access forbidden (403). Check backend security, JWT filters, and CORS configuration."
+                    );
+                }
+
+                if (response.status === 404) {
+                    throw new Error(
+                        "Login endpoint not found (404). Check the backend controller URL."
+                    );
+                }
+
                 throw new Error(
-                    data.message || "Invalid email or password"
+                    data.message ||
+                    `Login failed. HTTP status: ${response.status}`
                 );
             }
 
-            // Store JWT token
+            // Verify response contains a token
+            if (!data.token) {
+                throw new Error(
+                    "The server responded successfully but did not return a login token."
+                );
+            }
+
+            // Store login information
             localStorage.setItem("token", data.token);
 
-            // Store admin/warden information
-            localStorage.setItem("name", data.name);
-            localStorage.setItem("email", data.email);
-            localStorage.setItem("role", data.role);
+            if (data.name != null) {
+                localStorage.setItem("name", data.name);
+            }
+
+            if (data.email != null) {
+                localStorage.setItem("email", data.email);
+            }
+
+            if (data.role != null) {
+                localStorage.setItem("role", data.role);
+            }
 
             setMessage("Login successful!");
 
-            console.log("Login Response:", data);
-            console.log("JWT Token:", data.token);
+            console.log("Login successful. User:", {
+                name: data.name,
+                email: data.email,
+                role: data.role
+            });
 
         } catch (error) {
-
             console.error("Login Error:", error);
 
-            setMessage(
-                error.message || "Login failed"
-            );
-
+            if (error instanceof TypeError) {
+                setMessage(
+                    "Unable to connect to the server. Check your internet connection, backend status, and CORS settings."
+                );
+            } else {
+                setMessage(error.message || "Login failed.");
+            }
         } finally {
             setLoading(false);
         }
@@ -66,45 +126,46 @@ function Login() {
 
     return (
         <div className="login-container">
-
             <div className="login-box">
-
                 <h1>Smart Hostel Management System</h1>
 
                 <h2>Admin / Warden Login</h2>
 
                 <form onSubmit={handleLogin}>
-
                     <div className="form-group">
-
-                        <label>Email</label>
+                        <label htmlFor="email">
+                            Email
+                        </label>
 
                         <input
+                            id="email"
                             type="email"
                             placeholder="Enter email"
                             value={email}
                             onChange={(e) =>
                                 setEmail(e.target.value)
                             }
+                            autoComplete="username"
                             required
                         />
-
                     </div>
 
                     <div className="form-group">
-
-                        <label>Password</label>
+                        <label htmlFor="password">
+                            Password
+                        </label>
 
                         <input
+                            id="password"
                             type="password"
                             placeholder="Enter password"
                             value={password}
                             onChange={(e) =>
                                 setPassword(e.target.value)
                             }
+                            autoComplete="current-password"
                             required
                         />
-
                     </div>
 
                     <button
@@ -113,17 +174,18 @@ function Login() {
                     >
                         {loading ? "Logging in..." : "Login"}
                     </button>
-
                 </form>
 
                 {message && (
-                    <p className="login-message">
+                    <p
+                        className="login-message"
+                        role="status"
+                        aria-live="polite"
+                    >
                         {message}
                     </p>
                 )}
-
             </div>
-
         </div>
     );
 }
