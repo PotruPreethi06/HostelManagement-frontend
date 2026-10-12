@@ -1,8 +1,11 @@
 
 import API_URL from "../api";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function Login() {
+    const navigate = useNavigate();
+
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [message, setMessage] = useState("");
@@ -15,25 +18,26 @@ function Login() {
         setLoading(true);
 
         try {
-            // Validate API URL
             if (!API_URL) {
                 throw new Error(
-                    "API URL is missing. Check your frontend API configuration."
+                    "API URL is missing. Check your API configuration."
                 );
             }
 
+            const baseURL = API_URL.replace(/\/+$/, "");
+
             const response = await fetch(
-                `${API_URL.replace(/\/+$/, "")}/admins/login`,
+                `${baseURL}/admins/login`,
                 {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
-                        "Accept": "application/json"
+                        Accept: "application/json",
                     },
                     body: JSON.stringify({
                         email: email.trim(),
-                        password: password
-                    })
+                        password: password,
+                    }),
                 }
             );
 
@@ -46,13 +50,11 @@ function Login() {
                 try {
                     data = JSON.parse(responseText);
                 } catch {
-                    data = {
-                        message: responseText
-                    };
+                    data = { message: responseText };
                 }
             }
 
-            // Handle HTTP errors
+            // Handle unsuccessful responses
             if (!response.ok) {
                 if (response.status === 401) {
                     throw new Error(
@@ -63,13 +65,13 @@ function Login() {
                 if (response.status === 403) {
                     throw new Error(
                         data.message ||
-                        "Access forbidden (403). Check backend security, JWT filters, and CORS configuration."
+                        "Access forbidden (403). Check backend security and CORS."
                     );
                 }
 
                 if (response.status === 404) {
                     throw new Error(
-                        "Login endpoint not found (404). Check the backend controller URL."
+                        "Login endpoint not found (404)."
                     );
                 }
 
@@ -79,42 +81,34 @@ function Login() {
                 );
             }
 
-            // Verify response contains a token
+            // Verify the JWT token exists
             if (!data.token) {
                 throw new Error(
-                    "The server responded successfully but did not return a login token."
+                    "Login response did not contain a token."
                 );
             }
 
-            // Store login information
+            // Save login information
             localStorage.setItem("token", data.token);
+            localStorage.setItem("name", data.name || "");
+            localStorage.setItem("email", data.email || email.trim());
+            localStorage.setItem("role", data.role || "");
 
-            if (data.name != null) {
-                localStorage.setItem("name", data.name);
-            }
-
-            if (data.email != null) {
-                localStorage.setItem("email", data.email);
-            }
-
-            if (data.role != null) {
-                localStorage.setItem("role", data.role);
-            }
-
-            setMessage("Login successful!");
-
-            console.log("Login successful. User:", {
+            console.log("Login successful:", {
                 name: data.name,
                 email: data.email,
-                role: data.role
+                role: data.role,
             });
 
+            // Navigate to the dashboard after login
+            navigate("/dashboard", { replace: true });
+
         } catch (error) {
-            console.error("Login Error:", error);
+            console.error("Login error:", error);
 
             if (error instanceof TypeError) {
                 setMessage(
-                    "Unable to connect to the server. Check your internet connection, backend status, and CORS settings."
+                    "Unable to connect to the server. Check your internet connection and backend CORS settings."
                 );
             } else {
                 setMessage(error.message || "Login failed.");
@@ -133,9 +127,7 @@ function Login() {
 
                 <form onSubmit={handleLogin}>
                     <div className="form-group">
-                        <label htmlFor="email">
-                            Email
-                        </label>
+                        <label htmlFor="email">Email</label>
 
                         <input
                             id="email"
@@ -151,9 +143,7 @@ function Login() {
                     </div>
 
                     <div className="form-group">
-                        <label htmlFor="password">
-                            Password
-                        </label>
+                        <label htmlFor="password">Password</label>
 
                         <input
                             id="password"
@@ -168,10 +158,7 @@ function Login() {
                         />
                     </div>
 
-                    <button
-                        type="submit"
-                        disabled={loading}
-                    >
+                    <button type="submit" disabled={loading}>
                         {loading ? "Logging in..." : "Login"}
                     </button>
                 </form>
