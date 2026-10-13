@@ -326,3 +326,33 @@ body {
     }
 
 }
+
+
+/* =========================
+   CREATE ACCOUNT BUTTON
+   ========================= */
+
+.login-box .create-account-button {
+    width: 100%;
+    display: block;
+    margin-top: 12px;
+    padding: 12px;
+    border: 2px solid #2563eb;
+    border-radius: 6px;
+    background: white;
+    color: #2563eb;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.login-box .create-account-button:hover {
+    background: #eff6ff;
+    color: #1d4ed8;
+}
+
+.login-box .create-account-button:focus-visible {
+    outline: 2px solid #2563eb;
+    outline-offset: 3px;
+}

@@ -13,7 +13,6 @@ function Login() {
 
     const handleLogin = async (e) => {
         e.preventDefault();
-
         setMessage("");
         setLoading(true);
 
@@ -26,24 +25,19 @@ function Login() {
 
             const baseURL = API_URL.replace(/\/+$/, "");
 
-            const response = await fetch(
-                `${baseURL}/admins/login`,
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        Accept: "application/json",
-                    },
-                    body: JSON.stringify({
-                        email: email.trim(),
-                        password: password,
-                    }),
-                }
-            );
+            const response = await fetch(`${baseURL}/admins/login`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Accept: "application/json",
+                },
+                body: JSON.stringify({
+                    email: email.trim(),
+                    password,
+                }),
+            });
 
-            // Read the response only once
             const responseText = await response.text();
-
             let data = {};
 
             if (responseText.trim()) {
@@ -54,7 +48,6 @@ function Login() {
                 }
             }
 
-            // Handle unsuccessful responses
             if (!response.ok) {
                 if (response.status === 401) {
                     throw new Error(
@@ -70,9 +63,7 @@ function Login() {
                 }
 
                 if (response.status === 404) {
-                    throw new Error(
-                        "Login endpoint not found (404)."
-                    );
+                    throw new Error("Login endpoint not found (404).");
                 }
 
                 throw new Error(
@@ -81,28 +72,18 @@ function Login() {
                 );
             }
 
-            // Verify the JWT token exists
             if (!data.token) {
                 throw new Error(
                     "Login response did not contain a token."
                 );
             }
 
-            // Save login information
             localStorage.setItem("token", data.token);
             localStorage.setItem("name", data.name || "");
             localStorage.setItem("email", data.email || email.trim());
             localStorage.setItem("role", data.role || "");
 
-            console.log("Login successful:", {
-                name: data.name,
-                email: data.email,
-                role: data.role,
-            });
-
-            // Navigate to the dashboard after login
             navigate("/dashboard", { replace: true });
-
         } catch (error) {
             console.error("Login error:", error);
 
@@ -122,21 +103,17 @@ function Login() {
         <div className="login-container">
             <div className="login-box">
                 <h1>Smart Hostel Management System</h1>
-
                 <h2>Admin / Warden Login</h2>
 
                 <form onSubmit={handleLogin}>
                     <div className="form-group">
                         <label htmlFor="email">Email</label>
-
                         <input
                             id="email"
                             type="email"
                             placeholder="Enter email"
                             value={email}
-                            onChange={(e) =>
-                                setEmail(e.target.value)
-                            }
+                            onChange={(e) => setEmail(e.target.value)}
                             autoComplete="username"
                             required
                         />
@@ -144,15 +121,12 @@ function Login() {
 
                     <div className="form-group">
                         <label htmlFor="password">Password</label>
-
                         <input
                             id="password"
                             type="password"
                             placeholder="Enter password"
                             value={password}
-                            onChange={(e) =>
-                                setPassword(e.target.value)
-                            }
+                            onChange={(e) => setPassword(e.target.value)}
                             autoComplete="current-password"
                             required
                         />
@@ -160,6 +134,14 @@ function Login() {
 
                     <button type="submit" disabled={loading}>
                         {loading ? "Logging in..." : "Login"}
+                    </button>
+
+                    <button
+                        type="button"
+                        className="create-account-button"
+                        onClick={() => navigate("/register")}
+                    >
+                        Create Account
                     </button>
                 </form>
 
